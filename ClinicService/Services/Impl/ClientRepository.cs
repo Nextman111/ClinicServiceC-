@@ -29,7 +29,7 @@ namespace ClinicService.Services.Impl
             connection.ConnectionString = connectionString;
             connection.Open();
             using SqliteCommand command =
-                new SqliteCommand("UPDATE clients SET Document = @Document, FirstName = @FirstName, SurName = @SurName, Patronymic = @Patronymic, Birthday = @Birthday WHERE ClientId=@ClientId)", connection);
+                new SqliteCommand("UPDATE clients SET Document = @Document, FirstName = @FirstName, SurName = @SurName, Patronymic = @Patronymic, Birthday = @Birthday WHERE ClientId=@ClientId", connection);
             command.Parameters.AddWithValue("@ClientId", item.ClientId);
             command.Parameters.AddWithValue("@Document", item.Document);
             command.Parameters.AddWithValue("@SurName", item.SurName);
@@ -74,6 +74,7 @@ namespace ClinicService.Services.Impl
                 client.Birthday = new DateTime(reader.GetInt64(5));
                 list.Add(client);
             }
+
             return list;
         }
 

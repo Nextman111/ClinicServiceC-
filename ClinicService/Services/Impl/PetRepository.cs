@@ -10,22 +10,22 @@ namespace ClinicService.Services.Impl
 
         private static SqliteConnection GetSqliteConnection()
         {
-            using SqliteConnection connection = new SqliteConnection();
+            SqliteConnection connection = new SqliteConnection();
             connection.ConnectionString = connectionString;
-            connection.Open();
             return connection;
         }
 
         public int Create(Pet item)
         {
             using SqliteConnection connection = GetSqliteConnection();
-            
+            connection.Open();
+
             using SqliteCommand command = new SqliteCommand(
                 "INSERT INTO pets(ClientId, Name, Birthday) " +
                 "VALUES(@ClientId, @Name, @Birthday)", connection);
             command.Parameters.AddWithValue("@ClientId", item.ClientId);
             command.Parameters.AddWithValue("@Name", item.Name);
-            command.Parameters.AddWithValue("@Birthday", item.Birthday);
+            command.Parameters.AddWithValue("@Birthday", item.Birthday.Ticks);
             command.Prepare();
             return command.ExecuteNonQuery();
         }
@@ -33,11 +33,11 @@ namespace ClinicService.Services.Impl
         public int Update(Pet item)
         {
             using SqliteConnection connection = GetSqliteConnection();
-         
+            connection.Open();
             using SqliteCommand command =
                 new SqliteCommand(
                     "UPDATE Pets SET ClientId = @ClientId, Name = @Name, Birthday = @Birthday" +
-                    "WHERE PetId=@PetId)", connection);
+                    "WHERE PetId=@PetId", connection);
             command.Parameters.AddWithValue("@PetId", item.PetId);
             command.Parameters.AddWithValue("@ClientId", item.ClientId);
             command.Parameters.AddWithValue("@Name", item.Name);
@@ -48,7 +48,7 @@ namespace ClinicService.Services.Impl
         public int Delete(int id)
         {
             using SqliteConnection connection = GetSqliteConnection();
-
+            connection.Open();
             using SqliteCommand command =
                 new SqliteCommand("DELETE FROM Pets WHERE PetId=@PetId", connection);
             command.Parameters.AddWithValue("@PetId", id);
@@ -58,15 +58,18 @@ namespace ClinicService.Services.Impl
 
         public IList<Pet> GetAll()
         {
-            List<Pet> list = new List<Pet>();
 
-            using SqliteConnection connection = GetSqliteConnection();
+            SqliteConnection connection = GetSqliteConnection();
+            connection.Open();
 
-            using SqliteCommand command =
-                new SqliteCommand("SELECT * FROM Pets", connection);
+            using SqliteCommand command = new SqliteCommand(
+                "SELECT * FROM Pets", connection
+                );
             command.Prepare();
 
             using SqliteDataReader reader = command.ExecuteReader();
+
+            List<Pet> list = new List<Pet>();
             
             while (reader.Read())
             {
@@ -82,8 +85,8 @@ namespace ClinicService.Services.Impl
 
         public Pet GetById(int id)
         {
-
             using SqliteConnection connection = GetSqliteConnection();
+            connection.Open();
 
             using SqliteCommand command =
                 new SqliteCommand("SELECT * FROM Pets WHERE PetID=@PetID", connection);
