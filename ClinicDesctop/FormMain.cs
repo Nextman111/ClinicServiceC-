@@ -14,7 +14,7 @@ namespace ClinicDesctop
         {
 
             ClinicLib connection = new ClinicLib("http://localhost:5115/", new HttpClient());
-            
+
 
 
             //очищаем поле
@@ -179,6 +179,44 @@ namespace ClinicDesctop
                 listViewPreview.Items.Add(item);
             }
 
+
+        }
+
+        private void buttonRemove_Click(object sender, EventArgs e)
+        {
+            ClinicLib connection = new ClinicLib("http://localhost:5115/", new HttpClient());
+
+
+
+            ListView.SelectedListViewItemCollection items = listViewPreview.SelectedItems;
+            foreach (ListViewItem item in items)
+            {
+                if (radioButtonClients.Checked)
+                {
+                    connection.ClientDeleteAsync(Int32.Parse(item.Text));
+                    listViewPreview.Items.Remove(item);
+                    continue;
+                }
+
+                if (radioButtonPets.Checked)
+                {
+                    connection.PetDeleteAsync(Int32.Parse(item.Text));
+                    listViewPreview.Items.Remove(item);
+                }
+            }
+
+        }
+
+
+        private void listViewPreview_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (listViewPreview.SelectedItems.Count > 0) { 
+                buttonRemove.Enabled = true; 
+            }
+            else
+            { 
+                buttonRemove.Enabled = false;
+            }
 
         }
     }

@@ -107,12 +107,14 @@
             // buttonRemove
             // 
             buttonRemove.Dock = DockStyle.Top;
+            buttonRemove.Enabled = false;
             buttonRemove.Location = new Point(10, 117);
             buttonRemove.Name = "buttonRemove";
             buttonRemove.Size = new Size(147, 47);
             buttonRemove.TabIndex = 2;
             buttonRemove.Text = "Удалить";
             buttonRemove.UseVisualStyleBackColor = true;
+            buttonRemove.Click += buttonRemove_Click;
             // 
             // buttonAdd
             // 
@@ -148,6 +150,7 @@
             // listViewPreview
             // 
             listViewPreview.Dock = DockStyle.Fill;
+            listViewPreview.FullRowSelect = true;
             listViewPreview.GridLines = true;
             listViewPreview.Location = new Point(3, 23);
             listViewPreview.Name = "listViewPreview";
@@ -155,6 +158,7 @@
             listViewPreview.TabIndex = 0;
             listViewPreview.UseCompatibleStateImageBehavior = false;
             listViewPreview.View = View.Details;
+            listViewPreview.ItemSelectionChanged += listViewPreview_ItemSelectionChanged;
             // 
             // FormMain
             // 
