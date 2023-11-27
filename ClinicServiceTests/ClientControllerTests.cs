@@ -69,7 +69,7 @@ namespace ClinicServiceTests
         public void DeleteClientIncorrectTest(int clientId)
         {
             // Подготовка данных для тестирования
-
+            
 
             _mockClientRepository.Setup(repository =>
                 repository.Delete(It.IsNotNull<int>())).Returns(1).Verifiable();
@@ -109,6 +109,84 @@ namespace ClinicServiceTests
             Assert.IsAssignableFrom<List<Client>>(okObjectResult.Value);
             _mockClientRepository.Verify(repository
                 => repository.GetAll(), Times.AtLeastOnce);
+
+        }
+
+
+        public static object[][] CorrectEditClient =
+        {
+            new object[] { 1, new DateTime(1986,1,22), "AA1123 32311", "Иванов", "Иван", "Иванович",},
+            new object[] { 2, new DateTime(1982,1,22), "AA1123 32311", "Иванов", "Иван", "Иванович",},
+            new object[] { 3, new DateTime(1955,1,22), "AA1123 32311", "Иванов", "Иван", "Иванович",},
+            new object[] { 0, new DateTime(2000,1,22), "AA1123 32311", "Иванов", "Иван", "Иванович",},
+            new object[] { 5, new DateTime(1909,1,22), "AA1123 32311", "ggjgh", "Иван", "Иванович",},
+
+        };
+
+        [Theory]
+        [MemberData(nameof(CorrectEditClient))]
+        public void EditClientTest( int clientId,
+            DateTime birthday, string document, string surName,
+            string firstName, string patronymic)
+        {
+            // Подготовка данных для тестирования
+            var updateClientRequest = new UpdateClientRequest();
+            updateClientRequest.ClientId = clientId;
+            updateClientRequest.FirstName = firstName;
+            updateClientRequest.SurName = surName;
+            updateClientRequest.Patronymic = patronymic;
+            updateClientRequest.Birthday = birthday;
+            updateClientRequest.Document = document;
+
+            _mockClientRepository.Setup(repository =>
+                repository.Update(It.IsNotNull<Client>())).Returns(1).Verifiable();
+
+            // Исполнение тестируемого метода
+            var operationResult = _clientController.Update(updateClientRequest);
+
+            //Подготовка эталонного результата и проверка результата
+            Assert.IsType<OkObjectResult>(operationResult.Result);
+            var okObjectResult = (OkObjectResult)operationResult.Result;
+
+            Assert.IsAssignableFrom<int>(okObjectResult.Value);
+            _mockClientRepository.Verify(repository
+                => repository.Update(It.IsNotNull<Client>()), Times.Once());
+        }
+
+        public static object[][] IncorrectEditClient =
+         {
+            new object[] { -1, new DateTime(1997,1,22), "AA1123 32311", "Иванов", "Иван", "Иванович",},
+            new object[] { -1, new DateTime(1997,1,22), "1", "Иванов", "Иван", "Иванович",},
+            new object[] { -5, new DateTime(1909,1,22), "AA1123 32311", "xc", "Иван", "Иванович",},
+        };
+
+        [Theory]
+        [MemberData(nameof(IncorrectEditClient))]
+        public void EditClientIncorrectTest(int clientId,
+            DateTime birthday, string document, string surName,
+            string firstName, string patronymic)
+        {
+            // Подготовка данных для тестирования
+            var updateClientRequest = new UpdateClientRequest();
+            updateClientRequest.ClientId = clientId;
+            updateClientRequest.FirstName = firstName;
+            updateClientRequest.SurName = surName;
+            updateClientRequest.Patronymic = patronymic;
+            updateClientRequest.Birthday = birthday;
+            updateClientRequest.Document = document;
+
+            _mockClientRepository.Setup(repository =>
+                repository.Update(It.IsNotNull<Client>())).Returns(1).Verifiable();
+
+            // Исполнение тестируемого метода
+            var operationResult = _clientController.Update(updateClientRequest);
+
+            //Подготовка эталонного результата и проверка результата
+            Assert.IsType<OkObjectResult>(operationResult.Result);
+            var okObjectResult = (OkObjectResult)operationResult.Result;
+
+            _mockClientRepository.Verify(repository
+                => repository.Update(It.IsNotNull<Client>()), Times.Never());
 
         }
 

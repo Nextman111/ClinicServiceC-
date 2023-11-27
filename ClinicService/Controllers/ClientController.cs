@@ -84,6 +84,61 @@ namespace ClinicService.Controllers
         [HttpPut("edit", Name = "ClientUpdate")]
         public ActionResult<int> Update([FromBody] UpdateClientRequest updateRequest)
         {
+            if (string.IsNullOrEmpty(updateRequest.SurName))
+            {
+                return Ok(new
+                {
+                    ErrCode = -10,
+                    ErrMessage = "Фамилия указана некорректно.",
+                });
+            }
+
+            if (string.IsNullOrEmpty(updateRequest.FirstName))
+            {
+                return Ok(new
+                {
+                    ErrCode = -11,
+                    ErrMessage = "Имя указано некорректно.",
+                });
+            }
+
+            if (string.IsNullOrEmpty(updateRequest.Patronymic))
+            {
+                return Ok(new
+                {
+                    ErrCode = -12,
+                    ErrMessage = "Отчество указага некорректно.",
+                });
+            }
+
+            if (updateRequest.Birthday > DateTime.Now.AddYears(-18))
+            {
+                return Ok(new
+                {
+                    ErrCode = -13,
+                    ErrMessage = "Возраст должен быть указан корректно.",
+                });
+            }
+
+            if (string.IsNullOrEmpty(updateRequest.Document) ||
+                updateRequest.Document.Length < 10)
+            {
+                return Ok(new
+                {
+                    ErrCode = -13,
+                    ErrMessage = "Документ должен быть указан корректно.",
+                });
+            }
+
+            if (updateRequest.ClientId < 0)
+            {
+                return Ok(new
+                {
+                    ErrCode = -14,
+                    ErrMessage = "Id указан некорректно.",
+                });
+            }
+
             Client client = new Client();
             client.ClientId = updateRequest.ClientId;
             client.Document = updateRequest.Document;
@@ -98,6 +153,7 @@ namespace ClinicService.Controllers
         [HttpDelete("delete", Name = "ClientDelete")]
         public ActionResult<int> Delete([FromQuery] int clientId)
         {
+
             if (clientId < 0)
             {
                 return Ok(new
