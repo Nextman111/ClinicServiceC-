@@ -98,6 +98,14 @@ namespace ClinicService.Controllers
         [HttpDelete("delete", Name = "ClientDelete")]
         public ActionResult<int> Delete([FromQuery] int clientId)
         {
+            if (clientId < 0)
+            {
+                return Ok(new
+                {
+                    ErrCode = -14,
+                    ErrMessage = "Id указан некорректно.",
+                });
+            }
             int res = _clientRepository.Delete(clientId);
             return Ok(res);
         }

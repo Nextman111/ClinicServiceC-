@@ -7,6 +7,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +23,69 @@ namespace ClinicServiceTests
             _mockClientRepository = new Mock<IClientRepository>();
             _clientController = new ClientController(_mockClientRepository.Object);
         }
+
+        public static object[][] CorrectDeleteClientData =
+        {
+            new object[] { 1 },
+            new object[] { 2 },
+            new object[] { 3 },
+            new object[] { 4 },
+            new object[] { 5 },                     
+        };
+
+
+        [Theory]
+        [MemberData(nameof(CorrectDeleteClientData))]
+        public void DeleteClientTest(int clientId)
+        {
+            // Подготовка данных для тестирования
+           
+
+            _mockClientRepository.Setup(repository =>
+                repository.Delete(It.IsNotNull<int>())).Returns(1).Verifiable();
+
+            // Исполнение тестируемого метода
+            var operationResult = _clientController.Delete(clientId);
+
+            //Подготовка эталонного результата и проверка результата
+            Assert.IsType<OkObjectResult>(operationResult.Result);
+            var okObjectResult = (OkObjectResult)operationResult.Result;
+
+
+            _mockClientRepository.Verify(repository
+                => repository.Delete(It.IsNotNull<int>()), Times.Once());
+        }
+
+
+        public static object[][] IncorrectDeleteClientData =
+        {
+            new object[] { -1 }, // Incorrect
+            new object[] { -2 }, // Incorrect
+            new object[] { -1000 }, // Incorrect                             
+        };
+
+        [Theory]
+        [MemberData(nameof(IncorrectDeleteClientData))]
+        public void DeleteClientIncorrectTest(int clientId)
+        {
+            // Подготовка данных для тестирования
+
+
+            _mockClientRepository.Setup(repository =>
+                repository.Delete(It.IsNotNull<int>())).Returns(1).Verifiable();
+
+            // Исполнение тестируемого метода
+            var operationResult = _clientController.Delete(clientId);
+
+            //Подготовка эталонного результата и проверка результата
+            Assert.IsType<OkObjectResult>(operationResult.Result);
+            var okObjectResult = (OkObjectResult)operationResult.Result;
+
+
+            _mockClientRepository.Verify(repository
+                => repository.Delete(It.IsNotNull<int>()), Times.Never());
+        }
+
 
         [Fact]
         public void GetAllClientsTest()
